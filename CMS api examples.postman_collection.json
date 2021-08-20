@@ -1,0 +1,901 @@
+{
+	"info": {
+		"_postman_id": "6fc87336-9ea1-4d2d-b919-5601bafea7ba",
+		"name": "CMS api examples",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "#0 List Service and get token",
+			"item": [
+				{
+					"name": "0. Get service endpoint (no token)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{tenantadmin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/service",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"service"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. GET otds token for tenant admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"\r",
+									"postman.setEnvironmentVariable(\"account\", \"bearer \"+jsonData.access_token); "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{otds_auth}}/otdstenant/374b36e6-eb5c-4f87-be8c-a445b1c1d0dd/oauth2/token?grant_type=password&client_id=cms&client_secret=password&username=youremail@company.co&password=yourPassword&client_data=subName%3Dcmssvc-organics-1001%26ten%3Dorganics",
+							"host": [
+								"{{otds_auth}}"
+							],
+							"path": [
+								"otdstenant",
+								"374b36e6-eb5c-4f87-be8c-a445b1c1d0dd",
+								"oauth2",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "password"
+								},
+								{
+									"key": "client_id",
+									"value": "cms"
+								},
+								{
+									"key": "client_secret",
+									"value": "password"
+								},
+								{
+									"key": "username",
+									"value": "youremail@company.co"
+								},
+								{
+									"key": "password",
+									"value": "yourPassword"
+								},
+								{
+									"key": "client_data",
+									"value": "subName%3Dcmssvc-organics-1001%26ten%3Dorganics"
+								}
+							]
+						},
+						"description": "Create otds token for cms "
+					},
+					"response": [
+						{
+							"name": "6. POST otds token for user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{financeadmin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://otdsauth-rps.dev.bp-paas.otxlab.net/oauth2/token?grant_type=password&client_id=cms&client_secret=password&username=youremail@company.com&password=yourPassword&client_data=subName%3Djantest2-jantest2-1006-1001%26ten%3Djantest2",
+									"protocol": "http",
+									"host": [
+										"otdsauth-rps",
+										"dev",
+										"bp-paas",
+										"otxlab",
+										"net"
+									],
+									"path": [
+										"oauth2",
+										"token"
+									],
+									"query": [
+										{
+											"key": "grant_type",
+											"value": "password"
+										},
+										{
+											"key": "client_id",
+											"value": "cms"
+										},
+										{
+											"key": "client_secret",
+											"value": "password"
+										},
+										{
+											"key": "username",
+											"value": "youremail@company.co"
+										},
+										{
+											"key": "password",
+											"value": "yourPassword"
+										},
+										{
+											"key": "client_data",
+											"value": "subName%3Djantest2-jantest2-1006-1001%26ten%3Djantest2"
+										}
+									]
+								}
+							},
+							"status": "Unsupported Media Type",
+							"code": 415,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 01 Mar 2019 22:00:50 GMT"
+								},
+								{
+									"key": "X-Vcap-Request-Id",
+									"value": "c9a0d3dd-f6a9-4d23-5339-14f45a5ebc24"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "#1 Define your own namespace, type and trait",
+			"item": [
+				{
+					"name": "CUSTOM TYPE 1: create namespace - acme_rd",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"prefix\": \"acmerd\",\r\n  \"display_name\": \"R&D\",\r\n  \"description\":\"Research and Development\",\r\n  \"name\": \"acme_rd\"\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/namespaces/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"namespaces",
+								""
+							]
+						},
+						"description": "This call defines a namespace - otex_rd which allows you to group your types."
+					},
+					"response": []
+				},
+				{
+					"name": "CUSTOM TYPE 2: create trait - approval",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"approval_trait\",\r\n  \"namespace\":\"acme_rd\",\r\n  \"display_name\":\"approval\",\r\n  \"attributes\": [\r\n    {\r\n      \"name\": \"approved_by\",\r\n      \"display_name\":\"Approved by\",\r\n      \"data_type\": \"string\",\r\n      \"size\": 100,\r\n      \"validators\": [\r\n        {\r\n          \"type\":\"length_validator\",\r\n          \"params\": [\r\n            {\r\n              \"name\":\"min\",\r\n              \"value\":\"1\"\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n\t,\r\n    {\r\n      \"name\": \"approved_role\",\r\n      \"display_name\":\"Approver Role\",\r\n      \"data_type\": \"string\",\r\n      \"size\": 50\r\n    },   \r\n    {\r\n      \"name\": \"approved_date\",\r\n      \"searchable\" : true,\r\n      \"display_name\": \"Approved Date\",\r\n      \"data_type\": \"date\",\r\n      \"size\": 64\r\n    }\r\n  ]\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/trait-definitions/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"trait-definitions",
+								""
+							]
+						},
+						"description": "This api defines a trait (property bags) that can be dynamicaly attach to an object or as required_trait (mandatory) when creating an object."
+					},
+					"response": []
+				},
+				{
+					"name": "CUSTOM TYPE 3: create file type - acmerd_sop",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n  \"name\": \"sop_type\",\r\n  \"display_name\": \"Standard Operating Procedure\",\r\n  \"namespace\": \"acme_rd\",\r\n  \"attributes\": [\r\n    {\r\n      \"name\": \"classification\",\r\n      \"display_name\": \"classification\",\r\n      \"searchable\" : true,\r\n      \"data_type\": \"string\",\r\n      \"size\": 64,\r\n      \"validators\": [\r\n        {\r\n          \"type\": \"length_validator\",\r\n          \"operation\": \"Create\",\r\n          \"params\": [\r\n            {\r\n              \"name\": \"min\",\r\n              \"value\": \"1\"\r\n            }\r\n          ]\r\n        },\r\n        {\r\n          \"type\": \"length_validator\",\r\n          \"operation\": \"Update\",\r\n          \"params\": [\r\n            {\r\n              \"name\": \"min\",\r\n              \"value\": \"1\"\r\n            }\r\n          ]\r\n        },\r\n        {\r\n          \"type\": \"regex_validator\",\r\n          \"operation\": \"Create\",\r\n          \"params\": [\r\n            {\r\n              \"name\": \"regex\",\r\n              \"value\": \"^[a-zA-Z]\\\\w*$\"\r\n            }\r\n          ]\r\n        },\r\n        {\r\n          \"type\": \"regex_validator\",\r\n          \"operation\": \"Update\",\r\n          \"params\": [\r\n            {\r\n              \"name\": \"regex\",\r\n              \"value\": \"^[a-zA-Z]\\\\w*$\"\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"department_name\",\r\n      \"display_name\": \"Department Name\",\r\n      \"searchable\" : true,\r\n      \"data_type\": \"string\",\r\n      \"size\": 64,\r\n      \"required\":true\r\n    },\r\n\r\n            {\r\n      \"name\": \"effective_date\",\r\n      \"searchable\" : true,\r\n      \"display_name\": \"Effective Date\",\r\n      \"data_type\": \"date\",\r\n      \"size\": 64\r\n    },\r\n        {\r\n      \"name\": \"reviewed_date\",\r\n      \"searchable\" : true,\r\n      \"display_name\": \"Reviewed Date\",\r\n      \"data_type\": \"date\",\r\n      \"size\": 64\r\n    },\r\n    {\r\n      \"name\": \"status\",\r\n      \"display_name\": \"Status\",\r\n      \"searchable\" : true,\r\n      \"data_type\": \"string\",\r\n      \"size\": 256\r\n    },\r\n    {\r\n      \"name\": \"sop_number\",\r\n      \"display_name\": \"SOP Number\",\r\n      \"searchable\" : true,\r\n      \"data_type\": \"string\",\r\n      \"size\": 22\r\n    }]\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{host}}/type-definitions/file",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"type-definitions",
+								"file"
+							]
+						},
+						"description": "This shows how to define your own \"file\" type-definitions under the \"otex_rd\" namespace. \n\nYou can define your own attributes, index(es) and mandatory traits on your type.\n\nYou can make a trait mandatory by specifying the required_traits:\n\n  \"required_traits\": [\n    {\n      \"instance_name\": \"manager_approval\", ==> This is an instance name you will assign when you create with the trait.\n      \"trait_name\": \"otex_rd_approval\" ==> this is the system name of the trait you have defined.\n    }"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "#2 Create a folder with trait",
+			"item": [
+				{
+					"name": "FOLDER 1. Create folder with approval trait",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if(jsonData){",
+									"    var newFolderId = jsonData.id;",
+									"    postman.setEnvironmentVariable(\"new_folder_id\", newFolderId);",
+									"        var newFolderLink = jsonData._links.self.href;",
+									"    postman.setEnvironmentVariable(\"new_folder_link\", newFolderLink);",
+									"    ",
+									"    ",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Training Budget 2019 folder1 {{$timestamp}}\",\r\n  \"traits\": {\r\n    \"acmerd_approval_trait\": {\r\n      \t\"level1_approval\": {\r\n        \t\t\"approved_by\" : \"donaldd\",\r\n        \t\t\"approved_date\": \"2019-08-19\",\r\n        \t\t\"approved_role\":\"Manager\"\r\n      \t\t         }\r\n    \t\t\t\t}\r\n            }\r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/instances/folder/cms_folder",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"instances",
+								"folder",
+								"cms_folder"
+							]
+						},
+						"description": "This will create a new test folder under root folder.\n\nIf parent_folder_id is not provided, folder will be created under the root folder by default."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "#3 Create a file with Content",
+			"item": [
+				{
+					"name": "FILE: 1. Upload file content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if(jsonData && jsonData.entries){",
+									"    var blobid = jsonData.entries[0]._links.self.href;",
+									"    postman.setEnvironmentVariable(\"upload_blob_id\", blobid);",
+									"    ",
+									"     var blobid = jsonData.entries[0]._links.download.href;",
+									"    postman.setEnvironmentVariable(\"download_blob_id\", blobid);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "text/plain"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{content-service-endpoint}}/v2/content",
+							"host": [
+								"{{content-service-endpoint}}"
+							],
+							"path": [
+								"v2",
+								"content"
+							]
+						},
+						"description": "This calls upload to CSS(Content Storage Service) to upload the content.\n\nReplace the value with a file from your machine."
+					},
+					"response": []
+				},
+				{
+					"name": "FILE: 2. Create file instance with content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if(jsonData){",
+									"    var blobid = jsonData._links.self.href;",
+									"    postman.setEnvironmentVariable(\"doc_link\", blobid);",
+									"    var downloadLink = jsonData._links['urn:eim:linkrel:download-media'].href;",
+									"    postman.setEnvironmentVariable(\"doc_download_link\", downloadLink);",
+									"    ",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\r\n  \"name\": \"Training SOP {{$timestamp}}\",\r\n  \"description\": \"Code Conduct training\",\r\n  \"version_label\": [\"first\"],\r\n  \"properties\":{\r\n      \"classification\":\"Internal\",\r\n      \"department_name\":\"R&D\",\r\n      \"status\":\"Draft\"\r\n  },\r\n  \"renditions\": [{\r\n  \t \"name\":\"my content file\",     \r\n  \t  \"rendition_type\":\"primary\",\r\n  \t     \"blob_id\":\"{{download_blob_id}}\"\r\n  }]  \r\n}"
+						},
+						"url": {
+							"raw": "{{host}}/instances/file/acmerd_sop",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"instances",
+								"file",
+								"acmerd_sop"
+							]
+						},
+						"description": "This call uses the download_blob_id returned from, FILE1. Upload file content, to create a file under the root folder. \n\nIf parent_folder_id is not provided, file will be created under the root folder by default."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "#4 Move the file into the folder",
+			"item": [
+				{
+					"name": "MOVE 1. Move a file to a different folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"href\": \"{{new_folder_link}}\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{doc_link}}/parent",
+							"host": [
+								"{{doc_link}}"
+							],
+							"path": [
+								"parent"
+							]
+						},
+						"description": "This call uses takes the file created in ,FILE2. create file instance with content, and moved it to a folder created in ,FOLDER 1. create folder."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "#5 See items and content",
+			"item": [
+				{
+					"name": "FILTER: Find items under folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/instances/any/cms_any?include-total=true&filter=IN_TREE('057a1d3a-2876-11e8-b467-0ed5f89f718b')",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"instances",
+								"any",
+								"cms_any"
+							],
+							"query": [
+								{
+									"key": "include-total",
+									"value": "true"
+								},
+								{
+									"key": "filter",
+									"value": "IN_TREE('057a1d3a-2876-11e8-b467-0ed5f89f718b')"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"url": {
+							"raw": "{{doc_download_link}}",
+							"host": [
+								"{{doc_download_link}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "#6 Clean types",
+			"item": [
+				{
+					"name": "Delete file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{doc_link}}",
+							"host": [
+								"{{doc_link}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"url": {
+							"raw": "{{new_folder_link}}",
+							"host": [
+								"{{new_folder_link}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete any by id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/instances/any/cms_any/09184b98-1097-440e-8beb-fd185bfa62bc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"instances",
+								"any",
+								"cms_any",
+								"09184b98-1097-440e-8beb-fd185bfa62bc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete approval trait",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{account}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/trait-definitions/acmerd_approval",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"trait-definitions",
+								"acmerd_approval"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete SOP doc type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{account}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/type-definitions/acmerd_sop",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"type-definitions",
+								"acmerd_sop"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
